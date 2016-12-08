@@ -26,7 +26,7 @@
       (= :south heading) [x (- y amount)]
       (= :east heading)  [(+ x amount) y]
       (= :west heading)  [(- x amount) y]
-      :otherwise (throw "This is fine."))))
+      :otherwise (throw (Exception. "This is fine.")))))
 
 (defn move
   "Given a current location (a vector of a heading followed by
@@ -52,8 +52,8 @@
       (cond
         (v loc) (reduced [heading loc v])
         (= n dist) [heading loc v]
-        :else (let [new (forward heading loc 1)]
-                (recur (inc n) (conj v loc) new))))))
+        :else
+        (recur (inc n) (conj v loc) (forward heading loc 1))))))
 
 (defn to-instruction
   "An instruction is a direction to turn (either :left or :right) and a
