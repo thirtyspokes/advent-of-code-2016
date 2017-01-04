@@ -1,5 +1,6 @@
 (ns day4.core
-  (:require [clojure.core.reducers :as r]))
+  (:require [clojure.core.reducers :as r]
+            [tesser.core :as t]))
 
 (defn clean-input
   "Removes dashes from the room name."
@@ -94,12 +95,12 @@
   [lines]
   (reduce + (map :room-code (filter :real? (map parse-encrypted-room lines)))))
 
-(defn solver
+(defn solve-reducer
   "Solve part one with reducers."
   [lines]
   (r/fold + (r/map :room-code (r/filter :real? (r/map parse-encrypted-room lines)))))
 
-(defn solvet
+(defn solve-transducer
   "Solve part one using transducers."
   [lines]
   (let [xf (comp
@@ -108,3 +109,11 @@
              (map :room-code))]
     (transduce xf + lines)))
 
+(defn solve-tesser
+  "Solve part one using the tesser library."
+  [lines]
+  (->> (t/map parse-encrypted-room)
+    (t/filter :real?)
+    (t/map :room-code)
+    (t/fold +)
+    (t/tesser (t/chunk 2048 lines))))
